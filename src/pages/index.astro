@@ -1,9 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import PokemonCard from '../components/PokemonCard.astro';
-import { fetchPokemons, getPokemons,  type PokemonSmall } from '../models/PokemonModels';
+import PokemonCard from '../components/PokemonSmallCard.astro';
+import { getPokemons, type PokemonSmall } from '../models/PokemonModels';
 
-fetchPokemons();
 const pokemons: PokemonSmall[] | undefined = await getPokemons();
 ---
 

@@ -1,3 +1,6 @@
+import type { any } from "astro:schema";
+import { classicNameResolver } from "typescript";
+
 export interface PokemonSmall {
     id: number,
     name: string,
@@ -105,7 +108,9 @@ export async function  fetchPokemons() : Promise<PokemonSmall[]> {
     }
 }
 
-export async function fetchPokemonsById(id: number) : Promise<PokemonBig> {
+export async function fetchPokemonsById(id : number) : Promise<PokemonBig> {
+
+    
     const pokemonResponse: any  = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
     .then(res => res.json())
     .then(data => data)
@@ -114,10 +119,10 @@ export async function fetchPokemonsById(id: number) : Promise<PokemonBig> {
     const pokemon : PokemonBig = 
     {
         basicData: {
-            id: id,
+            id: pokemonResponse.id,
             name: pokemonResponse.name,
             types: pokemonResponse.types,
-            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonResponse.id}.png`
 
         },
         height: pokemonResponse.height,
@@ -125,6 +130,42 @@ export async function fetchPokemonsById(id: number) : Promise<PokemonBig> {
     }
 
     return pokemon;
+
+}
+
+export async function fetchPokemonsEvolutions(id: number) : Promise<string[]>{
+
+    const pokemonResponse: any  = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`)
+    .then(res => res.json())
+    .then(data => data)
+    .catch(err => console.log(err));
+
+    const evolutionChainURL = pokemonResponse.evolution_chain.url;
+
+    const evolutionChainResponse: any  = await fetch(evolutionChainURL)
+    .then(res => res.json())
+    .then(data => data)
+    .catch(err => console.log(err));
+    
+   
+    const evolutionNames: string [] = [];
+    //Añadimos el primer eslabon de la cadena de evolucion 
+    evolutionNames.push(evolutionChainResponse.chain.species.name);
+    //Y luego recorremos todas las evoluciones :)
+    const evolutionChainData = evolutionChainResponse.chain.evolves_to;
+    function extractEvolutions(chain: any) {
+        if(chain.length > 0){
+            chain.forEach((evolution : any) => {
+                evolutionNames.push(evolution.species.name);
+                if (evolution.evolves_to.length > 0) {
+                    extractEvolutions(evolution.evolves_to);
+                }
+            });
+        }
+    }
+    extractEvolutions(evolutionChainData);
+    
+    return evolutionNames;
 
 }
 
@@ -142,11 +183,26 @@ export async function getPokemonsById(id: number) {
         const pokemons = await fetchPokemonsById(id);
         return pokemons;
     } catch (error) {
-        console.error('Error fetching pokémons:', error);
+        console.error('Error fetching pokemons by id:', error);
     }
 }
 
-//TODO: sacar esta funcion de aquiiiiii
+export async function getPokemonsEvolutions(id: number){
+    try {
+        const evolutions = await fetchPokemonsEvolutions(id);
+        return evolutions;
+    }catch(error){
+        console.log('Error fetching pokemons evolutions');
+    }
+}
+
+
+
+
+
+
+
+//TODO: sacar estas funcion de aquiiiiii
 export function capitalizeFirstLetter(string: string) {
     const [first, ...rest] = string;
     return first.toUpperCase() + rest.join('').toLowerCase();
@@ -154,7 +210,6 @@ export function capitalizeFirstLetter(string: string) {
 
 export function mapId (id : number) : string {
     let stringId = id.toString();
-    
     switch (stringId.length) {
         case 1: return "000" + stringId;
         case 2: return "00" + stringId;
@@ -163,6 +218,7 @@ export function mapId (id : number) : string {
     return stringId;
 }
 
+//funcion para mapear la altura y el peso del pokemon 
 export function mapWHPokemon (d : number) : string{
     const data = (d / 10).toFixed(1);
     return data;

@@ -1,6 +1,8 @@
 ---
+import { undefined } from "astro:schema";
 import Layout from "../../layouts/Layout.astro";
-import { capitalizeFirstLetter, fetchPokemonsById, getPokemonsById, mapId, mapWHPokemon, TypeColors, type PokemonBig, type PokemonType } from "../../models/PokemonModels";
+import {capitalizeFirstLetter, getPokemonsById, getPokemonsEvolutions, mapId, mapWHPokemon, 
+        TypeColors, type PokemonBig, type PokemonType } from "../../models/PokemonModels";
 const {id} = Astro.params;
 
 export async function getStaticPaths() {
@@ -11,8 +13,13 @@ export async function getStaticPaths() {
     return paths;
 }
 
-fetchPokemonsById(parseInt(id));
 const pokemon : PokemonBig | undefined = await getPokemonsById(parseInt(id));
+const evolutions : string | string[] | undefined = await getPokemonsEvolutions(parseInt(id)); 
+let evolutionsData : PokemonBig [] | undefined = [];
+
+// evolutions?.forEach(async evolution => {
+//     evolutionsData = await getPokemonsById(evolution);
+// });
 ---
 
 <Layout title={pokemon!.basicData.name}>
@@ -20,7 +27,19 @@ const pokemon : PokemonBig | undefined = await getPokemonsById(parseInt(id));
     my-36">
     <div class="flex flex-col items-center text-center
     w-[450px] h-[450px]
-    bg-slate-400/20 border-gray-500 border rounded-2xl">Aquí evoluciones</div>
+    bg-slate-400/20 border-gray-500 border rounded-2xl">
+
+        {
+           
+
+                evolutions?.map((evolution : string) => (
+                    <p>{evolution}</p>
+                ))
+            
+        }
+       
+    </div>
+
     <div class="flex flex-col items-center text-center
     w-[450px] h-[450px]
     bg-slate-400/20 border-gray-500 border rounded-2xl">

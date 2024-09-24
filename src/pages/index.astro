@@ -3,20 +3,23 @@ import Layout from '../layouts/Layout.astro';
 import PokemonCard from '../components/PokemonSmallCard.astro';
 import { getPokemons, type PokemonSmall } from '../models/PokemonModels';
 
-const pokemons: PokemonSmall[] | undefined = await getPokemons();
+let limit : number = 100;
+let pokemons: PokemonSmall[] | undefined = await getPokemons(limit);
 ---
 
 <Layout title="Pokedex">
 	<main class="m-auto">
-    <section 
-    class="grid grid-cols-2 gap-7 p-2 my-32
-    md:grid-cols-4">
-        {
-            pokemons?.map((pokemon : PokemonSmall) => (
-                    <PokemonCard {pokemon}/>
-        ))
-        }
+    <section id="pokemon-grid">
+        <div class="grid grid-cols-2 gap-7 p-2 my-32
+        md:grid-cols-4">
+            {
+                pokemons?.map((pokemon : PokemonSmall) => (
+                        <PokemonCard {pokemon}/>
+            ))
+            }
+        </div>
     </section>
+    <button id="load-more-pkmn">Cargar más pokémons</button>
 	</main>
 </Layout>
 

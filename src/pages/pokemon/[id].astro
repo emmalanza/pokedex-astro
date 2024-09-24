@@ -1,49 +1,30 @@
 ---
-import { undefined } from "astro:schema";
 import Layout from "../../layouts/Layout.astro";
-import {capitalizeFirstLetter, getPokemonsById, getPokemonsEvolutions, mapId, mapWHPokemon, 
-        TypeColors, type PokemonBig, type PokemonType } from "../../models/PokemonModels";
+import {capitalizeFirstLetter, getPokemonsById, mapId, mapWHPokemon, 
+        TypeColors, type PokemonSmall, type PokemonBig, type PokemonType } from "../../models/PokemonModels";
+import PokemonCard from '../../components/PokemonEvolutionCard.astro';
 const {id} = Astro.params;
 
 export async function getStaticPaths() {
     const paths = [];
-    for (let i = 1; i <= 400; i++) {
+    for (let i = 1; i <= 1025; i++) { //FIXME  PONER CONSTANTE CON EL NUM TOTAL DE POKEMONS
         paths.push({params: {id: i.toString()}});
     }
     return paths;
 }
 
 const pokemon : PokemonBig | undefined = await getPokemonsById(parseInt(id));
-const evolutions : string | string[] | undefined = await getPokemonsEvolutions(parseInt(id)); 
-let evolutionsData : PokemonBig [] | undefined = [];
-
-// evolutions?.forEach(async evolution => {
-//     evolutionsData = await getPokemonsById(evolution);
-// });
 ---
 
 <Layout title={pokemon!.basicData.name}>
+
     <section class="flex justify-evenly content-center 
     my-36">
-    <div class="flex flex-col items-center text-center
-    w-[450px] h-[450px]
-    bg-slate-400/20 border-gray-500 border rounded-2xl">
-
-        {
-           
-
-                evolutions?.map((evolution : string) => (
-                    <p>{evolution}</p>
-                ))
-            
-        }
-       
-    </div>
 
     <div class="flex flex-col items-center text-center
-    w-[450px] h-[450px]
+    w-[500px] h-[500px]
     bg-slate-400/20 border-gray-500 border rounded-2xl">
-        <h2 class="text-5xl font-bold tracking-widest my-4">{capitalizeFirstLetter(pokemon!.basicData.name)}</h2>
+        <h2 class="text-5xl font-bold tracking-widest my-8">{capitalizeFirstLetter(pokemon!.basicData.name)}</h2>
         <h3 class="text-xs tracking-widest">No. {mapId(pokemon!.basicData.id)}</h3>
         <img src={pokemon!.basicData.image} alt={pokemon!.basicData.name} 
         class="h-52 w-52" transition:name=`media-image-${pokemon!.basicData.name}`/>
@@ -60,6 +41,25 @@ let evolutionsData : PokemonBig [] | undefined = [];
             ))}
         </div>
     </div>
+
+    <div class="flex justify-evenly flex-col items-center text-center
+    overflow-scroll 
+    w-[500px] h-[500px] 
+    bg-slate-400/20 border-gray-500 border rounded-2xl">
+
+    <h2 class="text-5xl font-bold tracking-widest">Evoluciones</h2>
+    {
+        pokemon?.evolutions?.length === 1 ?  
+        <p>Este pokémon no tiene evolucionnes</p>
+        :
+        pokemon?.evolutions?.map((pokemon : PokemonSmall, index: number) => (
+        <PokemonCard {pokemon}/>  
+        ))
+        
+    }
+    </div>
+
     </section>
 
 </Layout>
+

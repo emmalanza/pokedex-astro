@@ -1,5 +1,4 @@
-import type { any } from "astro:schema";
-import { classicNameResolver } from "typescript";
+const totalNumOfPokemons: number = 1025;
 
 export interface PokemonSmall {
     id: number,
@@ -12,6 +11,7 @@ export interface PokemonBig {
     basicData: PokemonSmall,
     height: number,
     weight: number,
+    evolutions?: PokemonSmall[]
 }
 
 export interface PokemonType {
@@ -46,10 +46,10 @@ export const TypeColors : { [clave: string]: string } = {
     "shadow": "bg-pokemonTypes-shadow",
 }
 
-export async function  fetchPokemons() : Promise<PokemonSmall[]> {
+export async function  fetchPokemons(limit : number) : Promise<PokemonSmall[]> {
     try {
-        //TODO pasar url como param
-        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=12');
+
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`);
         
         // Verificamos si la respuesta es válida y si tiene el campo 'results'
         if (!response.ok) {
@@ -65,9 +65,8 @@ export async function  fetchPokemons() : Promise<PokemonSmall[]> {
 
         const pokemons: PokemonSmall[] = await Promise.all(
             pokemonList.results.map(async (data: any, index: number) => {
-
-                const fakeI = index + 1;
-                if (fakeI > 1000) return; //FIXME
+               
+                if (index + 1 > totalNumOfPokemons) return; 
                 const typesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${index + 1}`);
                 
                 if (!typesResponse.ok) {
@@ -95,7 +94,7 @@ export async function  fetchPokemons() : Promise<PokemonSmall[]> {
                     name: data.name,
                     id: index + 1,
                     image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index + 1}.png`,
-                    types: types
+                    types: types, 
                 };
             })
         ).catch();
@@ -116,6 +115,8 @@ export async function fetchPokemonsById(id : number) : Promise<PokemonBig> {
     .then(data => data)
     .catch(err => console.log(err));
 
+
+
     const pokemon : PokemonBig = 
     {
         basicData: {
@@ -126,14 +127,15 @@ export async function fetchPokemonsById(id : number) : Promise<PokemonBig> {
 
         },
         height: pokemonResponse.height,
-        weight: pokemonResponse.weight
+        weight: pokemonResponse.weight,
+        evolutions: await getPokemonsEvolutions(pokemonResponse.id)
     }
 
     return pokemon;
 
 }
 
-export async function fetchPokemonsEvolutions(id: number) : Promise<string[]>{
+export async function fetchPokemonsEvolutions(id: number) : Promise<PokemonSmall[]>{
 
     const pokemonResponse: any  = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`)
     .then(res => res.json())
@@ -147,7 +149,6 @@ export async function fetchPokemonsEvolutions(id: number) : Promise<string[]>{
     .then(data => data)
     .catch(err => console.log(err));
     
-   
     const evolutionNames: string [] = [];
     //Añadimos el primer eslabon de la cadena de evolucion 
     evolutionNames.push(evolutionChainResponse.chain.species.name);
@@ -164,14 +165,27 @@ export async function fetchPokemonsEvolutions(id: number) : Promise<string[]>{
         }
     }
     extractEvolutions(evolutionChainData);
+
+    const pokemonEvolutionData: PokemonSmall[] = [];
+    for (const name of evolutionNames) {
+        const data = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+        .then(res => res.json())
+        .catch(err => console.log(err));
+        pokemonEvolutionData.push({
+            id: data.id,
+            name: data.name,
+            types: data.types,
+            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${data.id}.png`
+        })
+    }
     
-    return evolutionNames;
+    return pokemonEvolutionData;
 
 }
 
-export async function getPokemons() {
+export async function getPokemons(limit: number) {
     try {
-        const pokemons = await fetchPokemons();
+        const pokemons = await fetchPokemons(limit);
         return pokemons;
     } catch (error) {
         console.error('Error fetching pokémons:', error);
@@ -195,11 +209,6 @@ export async function getPokemonsEvolutions(id: number){
         console.log('Error fetching pokemons evolutions');
     }
 }
-
-
-
-
-
 
 
 //TODO: sacar estas funcion de aquiiiiii

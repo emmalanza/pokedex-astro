@@ -46,41 +46,40 @@ export const TypeColors : { [clave: string]: string } = {
     "shadow": "bg-pokemonTypes-shadow",
 }
 
-export async function  fetchPokemons(limit : number) : Promise<PokemonSmall[]> {
+export async function  fetchPokemons(offset: number, limit: number) : Promise<PokemonSmall[]> {
     try {
 
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`);
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`);
         
         // Verificamos si la respuesta es válida y si tiene el campo 'results'
         if (!response.ok) {
             throw new Error(`Error fetching Pokémon list: ${response.statusText}`);
         }
 
-        const pokemonList = await response.json();
+        const pokemonResponse = await response.json();
         
         // Verificamos si 'results' existe en la respuesta
-        if (!pokemonList || !pokemonList.results || !Array.isArray(pokemonList.results)) {
+        if (!pokemonResponse || !pokemonResponse.results || !Array.isArray(pokemonResponse.results)) {
             throw new Error('Invalid response format from PokeAPI');
         }
 
         const pokemons: PokemonSmall[] = await Promise.all(
-            pokemonList.results.map(async (data: any, index: number) => {
-               
-                if (index + 1 > totalNumOfPokemons) return; 
-                const typesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${index + 1}`);
+            pokemonResponse.results.map(async (data: any) => {
+
+                const typesResponse = await fetch(data.url);
                 
                 if (!typesResponse.ok) {
-                    throw new Error(`Error fetching Pokémon details for ID ${index + 1}`);
+                    throw new Error(`Error fetching Pokémon details for ${data.url}`);
                 }
 
-                const pokemonTypes = await typesResponse.json();
+                const pokemonById = await typesResponse.json();
 
-                if (!pokemonTypes || !pokemonTypes.types || !Array.isArray(pokemonTypes.types)) {
+                if (!pokemonById || !pokemonById.types || !Array.isArray(pokemonById.types)) {
                     throw new Error('Invalid response format from PokeAPI');
                 }
                 
                 // Obteniendo los tipos del Pokémon
-                const types : PokemonType[] = await pokemonTypes.types.map((type: any) =>{
+                const types : PokemonType[] = await pokemonById.types.map((type: any) =>{
                     return {
                         slot: type.slot,
                         type: {
@@ -92,8 +91,8 @@ export async function  fetchPokemons(limit : number) : Promise<PokemonSmall[]> {
                 
                 return {
                     name: data.name,
-                    id: index + 1,
-                    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index + 1}.png`,
+                    id: pokemonById.id,
+                    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonById.id}.png`,
                     types: types, 
                 };
             })
@@ -183,9 +182,9 @@ export async function fetchPokemonsEvolutions(id: number) : Promise<PokemonSmall
 
 }
 
-export async function getPokemons(limit: number) {
+export async function getPokemons(offset: number, limit: number) {
     try {
-        const pokemons = await fetchPokemons(limit);
+        const pokemons = await fetchPokemons(offset, limit);
         return pokemons;
     } catch (error) {
         console.error('Error fetching pokémons:', error);

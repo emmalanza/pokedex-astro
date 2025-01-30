@@ -1,8 +1,10 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import {capitalizeFirstLetter, getPokemonsById, mapId, mapWHPokemon, 
-        TypeColors, type PokemonSmall, type PokemonBig, type PokemonType } from "../../models/PokemonModels";
+
 import PokemonCard from '../../components/PokemonEvolutionCard.astro';
+import { getPokemonsById } from "../../lib/controllers/pokemonController";
+import { type PokemonBig, type PokemonType, TypeColors, type PokemonSmall } from "../../lib/models/pokemonModels";
+import { capitalizeFirstLetter, mapId, mapWHPokemon } from "../../lib/utils/utils";
 const {id} = Astro.params;
 
 export async function getStaticPaths() {

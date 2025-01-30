@@ -1,24 +1,16 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import PokemonCard from '../components/PokemonSmallCard.astro';
-import { getPokemons, type PokemonSmall } from '../models/PokemonModels';
+import PokemonCard from '../components/PokemonCard.astro';
+import { getPokemons } from '../lib/controllers/pokemonController';
+import type { PokemonSmall } from '../lib/models/pokemonModels';
+
 
 
 const pokemons: PokemonSmall[] | undefined = await getPokemons(0, 12);
 ---
 
 <Layout title="Pokedex">
-	<main class="m-auto">
-        <section>
-            <div>
-                <div>
-                    <label>Nombre o número</label>
-                    <input type="text">
-                </div>
-                <button>Buscar</button>
-            </div>
-    
-        </section>
+<main class="m-auto">
     <section id="pokemon-grid">
         <div class="grid grid-cols-2 gap-7 p-2 mt-32
         md:grid-cols-4">
@@ -35,12 +27,14 @@ const pokemons: PokemonSmall[] | undefined = await getPokemons(0, 12);
         transition-transform transform hover:scale-105">Cargar más pokémons</button>
     </section>
 
-	</main>
+</main>
 </Layout>
 
-<script> 
-    import {capitalizeFirstLetter, getPokemons, mapId, TypeColors, 
-            type PokemonSmall, type PokemonType} from '../models/PokemonModels';
+<script>
+import { getPokemons } from "../lib/controllers/pokemonController";
+import { TypeColors, type PokemonSmall, type PokemonType } from "../lib/models/pokemonModels";
+import { capitalizeFirstLetter, mapId } from "../lib/utils/utils";
+
 
     let offset = 12; 
     const limit = 12;

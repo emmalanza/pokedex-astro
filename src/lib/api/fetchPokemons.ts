@@ -1,50 +1,5 @@
-const totalNumOfPokemons: number = 1025;
-
-export interface PokemonSmall {
-    id: number,
-    name: string,
-    types: PokemonType[]
-    image: string,
-}
-
-export interface PokemonBig {
-    basicData: PokemonSmall,
-    height: number,
-    weight: number,
-    evolutions?: PokemonSmall[]
-}
-
-export interface PokemonType {
-    slot: number,
-    type: {
-        name: string,
-        url: string
-    }
-}
-
-export const TypeColors : { [clave: string]: string } = {
-    "normal": "bg-pokemonTypes-normal",
-    "fighting": "bg-pokemonTypes-fighting",
-    "flying": "bg-pokemonTypes-flying",
-    "poison": "bg-pokemonTypes-poison",
-    "ground": "bg-pokemonTypes-ground",
-    "rock": "bg-pokemonTypes-rock",
-    "bug": "bg-pokemonTypes-bug",
-    "ghost": "bg-pokemonTypes-ghost",
-    "steel": "bg-pokemonTypes-steel",
-    "fire": "bg-pokemonTypes-fire",
-    "water": "bg-pokemonTypes-water",
-    "grass": "bg-pokemonTypes-grass",
-    "electric": "bg-pokemonTypes-electric",
-    "psychic": "bg-pokemonTypes-psychic",
-    "ice": "bg-pokemonTypes-ice",
-    "dragon": "bg-pokemonTypes-dragon",
-    "dark": "bg-pokemonTypes-dark",
-    "fairy": "bg-pokemonTypes-fairy",
-    "stellar": "bg-pokemonTypes-stellar",
-    "unknown": "bg-pokemonTypes-unknown",
-    "shadow": "bg-pokemonTypes-shadow",
-}
+import { getPokemonsEvolutions } from "../controllers/pokemonController";
+import { type PokemonSmall, type PokemonType, type PokemonBig } from "../models/pokemonModels";
 
 export async function  fetchPokemons(offset: number, limit: number) : Promise<PokemonSmall[]> {
     try {
@@ -180,54 +135,4 @@ export async function fetchPokemonsEvolutions(id: number) : Promise<PokemonSmall
     
     return pokemonEvolutionData;
 
-}
-
-export async function getPokemons(offset: number, limit: number) {
-    try {
-        const pokemons = await fetchPokemons(offset, limit);
-        return pokemons;
-    } catch (error) {
-        console.error('Error fetching pokémons:', error);
-    }
-}
-
-export async function getPokemonsById(id: number) {
-    try {
-        const pokemons = await fetchPokemonsById(id);
-        return pokemons;
-    } catch (error) {
-        console.error('Error fetching pokemons by id:', error);
-    }
-}
-
-export async function getPokemonsEvolutions(id: number){
-    try {
-        const evolutions = await fetchPokemonsEvolutions(id);
-        return evolutions;
-    }catch(error){
-        console.log('Error fetching pokemons evolutions');
-    }
-}
-
-
-//TODO: sacar estas funcion de aquiiiiii
-export function capitalizeFirstLetter(string: string) {
-    const [first, ...rest] = string;
-    return first.toUpperCase() + rest.join('').toLowerCase();
-  }
-
-export function mapId (id : number) : string {
-    let stringId = id.toString();
-    switch (stringId.length) {
-        case 1: return "000" + stringId;
-        case 2: return "00" + stringId;
-        case 3: return "0" + stringId;
-    }
-    return stringId;
-}
-
-//funcion para mapear la altura y el peso del pokemon 
-export function mapWHPokemon (d : number) : string{
-    const data = (d / 10).toFixed(1);
-    return data;
 }

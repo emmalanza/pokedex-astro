@@ -1,96 +1,51 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import PokemonCard from '../components/PokemonCard.astro';
 import { getPokemons } from '../lib/controllers/pokemonController';
-import type { PokemonSmall } from '../lib/models/pokemonModels';
+import PokemonCard from '../components/PokemonCard.astro';
+import Layout from '../layouts/Layout.astro';
 
-
-
-const pokemons: PokemonSmall[] | undefined = await getPokemons(0, 12);
+const pokemons = await getPokemons(0, 12);
 ---
 
 <Layout title="Pokedex">
-<main class="m-auto">
-    <section id="pokemon-grid">
-        <div class="grid grid-cols-2 gap-7 p-2 mt-32
-        md:grid-cols-4">
-            {
-                pokemons?.map((pokemon : PokemonSmall) => (
-                        <PokemonCard {pokemon}/>
-            ))
-            }
-        </div>
+  <main class="m-auto">
+    <section class="mt-32 mb-10">
+      <div class="p-6 bg-white shadow-lg rounded-lg w-full max-w-md text-center">
+        <h2 class="text-2xl font-bold text-gray-800">Buscar Pokémon</h2>
+        <input 
+          id="pokemonInput" 
+          type="text" 
+          placeholder="Nombre o ID del Pokémon" 
+          class="w-full p-2 border rounded mt-4 text-center"
+          hx-get="partials/search-pokemons" 
+          hx-trigger="keyup delay:1000ms" 
+          hx-target="#pokemon-grid" 
+          hx-swap
+          hx-include="[name='pokemon']"
+          name="pokemon"
+        />
+      </div>
     </section>
-    <section class="flex justify-center items-center">
-        <button id="load-more-pkmn"
-        class="p-4 bg-slate-400/20 border-gray-500 border rounded-2xl my-4 
-        transition-transform transform hover:scale-105">Cargar más pokémons</button>
+    <section id="pokemon-grid" class="grid grid-cols-2 gap-4 p-6 md:grid-cols-4 
+    bg-gradient-radial rounded-2xl">
+      {pokemons?.map((pokemon, index) => {
+        if (index === 11) {
+          return (
+              <div
+                id="load-more-container"
+                hx-get="partials/load-more-pokemons?offset=12"
+                hx-trigger="revealed"
+                hx-swap="afterend"
+       
+              >
+              <PokemonCard {pokemon} />
+              </div>
+          );
+        }
+        return <div> <PokemonCard {pokemon} /></div> 
+      })}
     </section>
-
-</main>
+  </main>
 </Layout>
 
-<script>
-import { getPokemons } from "../lib/controllers/pokemonController";
-import { TypeColors, type PokemonSmall, type PokemonType } from "../lib/models/pokemonModels";
-import { capitalizeFirstLetter, mapId } from "../lib/utils/utils";
 
-
-    let offset = 12; 
-    const limit = 12;
-
-    const loadMorePkmn = document.getElementById('load-more-pkmn');
-    if(loadMorePkmn) {
-
-        loadMorePkmn.addEventListener('click', async () => {
-
-            const pokemons : PokemonSmall [] | undefined = await getPokemons(offset, limit);
-            offset += 12;
-
-            const pokemonGrid = document.getElementById('pokemon-grid');
-
-            const divPokemons = document.createElement('div');
-            divPokemons.className = 'grid grid-cols-2 gap-7 p-2 md:grid-cols-4';
-            
-            pokemons?.map((pokemon : PokemonSmall) => {
-
-                console.log(pokemon)
-
-                const a = document.createElement('a');
-                a.className = 'w-60 h-60 p-1 flex flex-col items-center bg-slate-400/10 border-gray-500 border rounded-2xl hover:bg-gray-200 cursor-pointer';
-                const image = document.createElement('img');
-                image.className = 'w-28';
-                const h3 = document.createElement('h3');
-                h3.className = 'text-2xl font-bold tracking-wide mt-1';
-                const p = document.createElement('p');
-                p.className = 'text-xs tracking-wide p-1';
-                const divTypes = document.createElement('div');
-                divTypes.className = 'flex flex-row space-x-1 mt-2 p-1 gap-2';
-
-
-                a.href = `pokemon/${pokemon.id}`;   
-                image.src = pokemon.image; image.alt = `Una foto de ${pokemon.name}`;
-                a.appendChild(image);
-                h3.innerText = capitalizeFirstLetter(pokemon.name);
-                a.appendChild(h3);
-                p.innerText = `No. ${mapId(pokemon.id)}`;
-                a.appendChild(p);
-
-                pokemon.types.map((types : PokemonType) => {
-
-                    const pType = document.createElement('p');
-                    pType.className = ` ${TypeColors[types.type.name]} opacity-80 rounded text-white text-center font-medium tracking-wide py-1 px-2`;
-                    pType.innerText = types.type.name;
-                    divTypes.appendChild(pType);
-                   
-                });
-                a.appendChild(divTypes);
-                
-                
-                divPokemons.appendChild(a);
-            });
-
-            pokemonGrid?.appendChild(divPokemons);
-        });
-    }
-</script>
+  

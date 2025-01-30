@@ -1,4 +1,4 @@
-const totalNumOfPokemons: number = 1025;
+ export const totalNumOfPokemons: number = 1025;
 
 export interface PokemonSmall {
     id: number,

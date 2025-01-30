@@ -12,7 +12,6 @@
   "dependencies": {
     "@astrojs/check": "^0.9.3",
     "@astrojs/tailwind": "^5.1.0",
-    "@fontsource-variable/pixelify-sans": "^5.1.0",
     "astro": "^4.15.6",
     "astro-htmx": "^1.0.6",
     "htmx.org": "^1.9.12",

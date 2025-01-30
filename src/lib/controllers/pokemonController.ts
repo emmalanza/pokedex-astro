@@ -1,4 +1,5 @@
-import { fetchPokemons, fetchPokemonsById, fetchPokemonsEvolutions } from "../api/fetchPokemons";
+import { fetchPokemons, fetchPokemonsByIdOrName
+    , fetchPokemonsEvolutions } from "../api/fetchPokemons";
 
 export async function getPokemons(offset: number, limit: number) {
     try {
@@ -9,9 +10,9 @@ export async function getPokemons(offset: number, limit: number) {
     }
 }
 
-export async function getPokemonsById(id: number) {
+export async function getPokemonsByIdOrName(idOrName: string) {
     try {
-        const pokemons = await fetchPokemonsById(id);
+        const pokemons = await fetchPokemonsByIdOrName(idOrName);
         return pokemons;
     } catch (error) {
         console.error('Error fetching pokemons by id:', error);

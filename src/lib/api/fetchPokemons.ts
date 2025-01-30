@@ -47,7 +47,7 @@ export async function  fetchPokemons(offset: number, limit: number) : Promise<Po
                 return {
                     name: data.name,
                     id: pokemonById.id,
-                    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonById.id}.png`,
+                    image: `https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/other/dream-world/${pokemonById.id}.svg`,
                     types: types, 
                 };
             })
@@ -61,10 +61,10 @@ export async function  fetchPokemons(offset: number, limit: number) : Promise<Po
     }
 }
 
-export async function fetchPokemonsById(id : number) : Promise<PokemonBig> {
+export async function fetchPokemonsByIdOrName(idOrName : string) : Promise<PokemonBig> {
 
     
-    const pokemonResponse: any  = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+    const pokemonResponse: any  = await fetch(`https://pokeapi.co/api/v2/pokemon/${idOrName}`)
     .then(res => res.json())
     .then(data => data)
     .catch(err => console.log(err));
@@ -77,14 +77,14 @@ export async function fetchPokemonsById(id : number) : Promise<PokemonBig> {
             id: pokemonResponse.id,
             name: pokemonResponse.name,
             types: pokemonResponse.types,
-            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonResponse.id}.png`
+            image: `https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/other/dream-world/${pokemonResponse.id}.svg`,
 
         },
         height: pokemonResponse.height,
         weight: pokemonResponse.weight,
         evolutions: await getPokemonsEvolutions(pokemonResponse.id)
     }
-
+    
     return pokemon;
 
 }
@@ -118,6 +118,7 @@ export async function fetchPokemonsEvolutions(id: number) : Promise<PokemonSmall
             });
         }
     }
+
     extractEvolutions(evolutionChainData);
 
     const pokemonEvolutionData: PokemonSmall[] = [];
@@ -129,7 +130,7 @@ export async function fetchPokemonsEvolutions(id: number) : Promise<PokemonSmall
             id: data.id,
             name: data.name,
             types: data.types,
-            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${data.id}.png`
+            image: `https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/other/dream-world/${data.id}.svg`,
         })
     }
     

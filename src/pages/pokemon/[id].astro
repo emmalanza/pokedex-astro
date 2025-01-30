@@ -1,33 +1,32 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 
-import PokemonCard from '../../components/PokemonEvolutionCard.astro';
-import { getPokemonsById } from "../../lib/controllers/pokemonController";
-import { type PokemonBig, type PokemonType, TypeColors, type PokemonSmall } from "../../lib/models/pokemonModels";
+import PokemonCard from '../../components/PokemonCard.astro';
+import { getPokemonsByIdOrName } from "../../lib/controllers/pokemonController";
+import { type PokemonBig, type PokemonType, TypeColors, type PokemonSmall, totalNumOfPokemons } from "../../lib/models/pokemonModels";
 import { capitalizeFirstLetter, mapId, mapWHPokemon } from "../../lib/utils/utils";
 const {id} = Astro.params;
 
 export async function getStaticPaths() {
     const paths = [];
-    for (let i = 1; i <= 1025; i++) { //FIXME  PONER CONSTANTE CON EL NUM TOTAL DE POKEMONS
+    for (let i = 1; i <= totalNumOfPokemons; i++) { 
         paths.push({params: {id: i.toString()}});
     }
     return paths;
 }
 
-const pokemon : PokemonBig | undefined = await getPokemonsById(parseInt(id));
+const pokemon : PokemonBig | undefined = await getPokemonsByIdOrName(id);
 ---
 
 <Layout title={pokemon!.basicData.name}>
 
-    <section class="flex justify-evenly content-center 
-    my-36">
+    <section class="flex flex-col justify-center items-center 
+    mt-28">
 
-    <div class="flex flex-col items-center text-center
-    w-[500px] h-[500px]
-    bg-slate-400/20 border-gray-500 border rounded-2xl">
-        <h2 class="text-5xl font-bold tracking-widest my-8">{capitalizeFirstLetter(pokemon!.basicData.name)}</h2>
-        <h3 class="text-xs tracking-widest">No. {mapId(pokemon!.basicData.id)}</h3>
+    <div class="flex flex-col items-center text-center mb-12
+      w-full rounded-2xl">
+        <h2 class="text-4xl font-bold tracking-widest mb-4">{capitalizeFirstLetter(pokemon!.basicData.name)}</h2>
+        <h3 class="text-xs tracking-widest mb-4">No. {mapId(pokemon!.basicData.id)}</h3>
         <img src={pokemon!.basicData.image} alt={pokemon!.basicData.name} 
         class="h-52 w-52" transition:name=`media-image-${pokemon!.basicData.name}`/>
         <div class="flex flex-col space-x-1 mt-1 p-1 gap-2">
@@ -44,21 +43,22 @@ const pokemon : PokemonBig | undefined = await getPokemonsById(parseInt(id));
         </div>
     </div>
 
-    <div class="flex justify-evenly flex-col items-center text-center
-    overflow-scroll 
-    w-[500px] h-[500px] 
-    bg-slate-400/20 border-gray-500 border rounded-2xl">
+    <div class="flex flex-col items-center text-center gap-4
+    border rounded-2xl">
 
-    <h2 class="text-5xl font-bold tracking-widest">Evoluciones</h2>
-    {
-        pokemon?.evolutions?.length === 1 ?  
-        <p>Este pokémon no tiene evolucionnes</p>
-        :
-        pokemon?.evolutions?.map((pokemon : PokemonSmall, index: number) => (
-        <PokemonCard {pokemon}/>  
-        ))
+    <h2 class="text-4xl font-bold tracking-widest">Evoluciones</h2>
+
+        <div class="flex flex-row flex-wrap gap-4">
+            {
+                pokemon?.evolutions?.length === 1 ?  
+                <p>Este pokémon no tiene evolucionnes</p>
+                :
+                pokemon?.evolutions?.map((pokemon : PokemonSmall) => (
+                <PokemonCard {pokemon}/>  
+                ))
+                }
+        </div>
         
-    }
     </div>
 
     </section>

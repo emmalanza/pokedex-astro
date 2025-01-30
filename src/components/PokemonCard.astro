@@ -2,23 +2,22 @@
 import { type PokemonType, TypeColors } from "../lib/models/pokemonModels"
 import { capitalizeFirstLetter, mapId } from "../lib/utils/utils"
 
-const {pokemon} = Astro.props
+const {pokemon} = Astro.props;
+const { id, name, image, types } = pokemon;
 ---
 
-<a href=pokemon/${pokemon.id}
-class="w-60 h-60 p-1
-flex flex-col items-center
-bg-slate-400/10
-border-gray-500 border rounded-2xl hover:bg-gray-200 cursor-pointer">
+<a  href={`/pokemon/${id}`} 
+class="w-60 h-60 p-1 bg-white/95
+flex flex-col items-center rounded-2xl cursor-pointer">
 
-    <img class="w-28" src={pokemon.image}
-    alt={`Una foto de ${pokemon.name}`}
-    transition:name=media-image-${pokemon.name}/>
+    <img class="w-28 h-28" src={image}
+    alt={`Una foto de ${name}`}
+    transition:name=media-image-${name}/>
 
-    <h3 class="text-2xl font-bold tracking-wide mt-1">{capitalizeFirstLetter(pokemon.name)}</h3>
-    <p class="text-xs tracking-wide p-1">No. {mapId(pokemon.id)}</p>
+    <h3 class="text-2xl font-bold tracking-wide mt-1">{capitalizeFirstLetter(name)}</h3>
+    <p class="text-xs tracking-wide p-1">No. {mapId(id)}</p>
     <div class="flex flex-row space-x-1 mt-2 p-1 gap-2">
-        {pokemon.types.map((types : PokemonType) => (
+        {types.map((types : PokemonType) => (
 
             <p class= `${TypeColors[types.type.name]}
             opacity-80 rounded text-white text-center font-medium tracking-wide py-1 px-2 

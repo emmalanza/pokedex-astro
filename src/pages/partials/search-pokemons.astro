@@ -1,0 +1,31 @@
+---
+import PokemonCard from '../../components/PokemonCard.astro';
+import { getPokemonsByIdOrName } from '../../lib/controllers/pokemonController';
+
+const url = new URL(Astro.request.url);
+const pokemonName = url.searchParams.get("pokemon");
+
+if (!pokemonName) {
+  return new Response("<p class='text-red-500'>Por favor, ingresa un nombre o ID.</p>", {
+    headers: { "Content-Type": "text/html" },
+  });
+}
+
+const pokemon = await getPokemonsByIdOrName(pokemonName.toLowerCase());
+
+if (!pokemon) {
+  return new Response("<p class='text-red-500'>No se encontró el Pokémon.</p>", {
+    headers: { "Content-Type": "text/html" },
+  });
+}
+
+const pokemonBasicData = pokemon?.basicData;
+---
+
+
+<div>
+    <PokemonCard pokemon={pokemonBasicData} />
+</div>
+
+
+

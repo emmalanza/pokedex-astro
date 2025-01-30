@@ -1,0 +1,27 @@
+---
+import PokemonCard from '../../components/PokemonCard.astro';
+import { getPokemons } from '../../lib/controllers/pokemonController';
+
+const url = new URL(Astro.request.url);
+let offset = Number(url.searchParams.get('offset')) || 12;
+const pokemons = await getPokemons(offset, 12);
+offset += 12;
+---
+
+{pokemons?.map((pokemon, index) => {
+  if (index === 11) {
+    return (
+        <div
+          id="load-more-container"
+          hx-get=`partials/load-more-pokemons?offset=${offset}`
+          hx-trigger="revealed"
+          hx-swap="afterend"
+        >
+        <PokemonCard {pokemon} />
+        </div>
+    );
+  }
+  return <div> <PokemonCard {pokemon} /></div> 
+})}
+
+

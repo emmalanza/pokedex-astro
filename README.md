@@ -7,15 +7,15 @@ This project is an **interactive Pokedex** built with **Astro**, **React**, and 
 - **React**: A JavaScript library for building interactive user interfaces.
 - **HTMX**: A library that enables making AJAX requests without writing additional JavaScript, which makes interactions easier and faster.
 - **Tailwind CSS**: A utility-first CSS framework that helps create modern and responsive user interfaces with ease.
-- **Pokémon API**: A public API is used to fetch information about the Pokémon.
+- **Pokemon API**: A public API is used to fetch information about the Pokemon.
 
 ## Features
 
-- **Search by name**: You can search for Pokémon by their name and get results quickly.
-- **Interactivity**: With HTMX, the Pokedex can load more Pokémon when you reach the end of the list without reloading the page.
+- **Search by name**: You can search for Pokemon by their name and get results quickly.
+- **Interactivity**: With HTMX, the Pokedex can load more Pokemon when you reach the end of the list without reloading the page.
 - **Responsive design**: The application is optimized for devices of all sizes, from mobile phones to desktops.
 
-### Pokémon Guesser Game
+### Pokemon Guesser Game
 In addition to the Pokedex, I've also added a Pokemon Guesser game. In this game, you will be shown a Pokemon's image with its colors inverted, and you have to guess its name.
 
 How it works: You will have a limited number of attempts to guess the Pokemon's name.

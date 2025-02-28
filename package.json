@@ -11,11 +11,12 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.3",
+    "@astrojs/netlify": "^6.2.2",
     "@astrojs/react": "^4.2.1",
     "@astrojs/tailwind": "^5.1.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
-    "astro": "^4.15.6",
+    "astro": "^5.4.1",
     "astro-htmx": "^1.0.6",
     "htmx.org": "^1.9.12",
     "react": "^19.0.0",

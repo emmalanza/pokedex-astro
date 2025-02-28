@@ -1,20 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-	content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+	content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}', './src/styles/custom.css'],
 	theme: {
 		extend: {
 			colors: {
 				pokemonTypes: {
 					normal: "#A0A2A0",
 					fighting: "#B22222",
-					flying: "#FF8100",
+					flying: "#89aae3",
 					poison: "#923FCC",
 					ground: "#92501B",
 					rock: "#B0AB82	",
 					bug: "#92A212",
 					ghost: "#713F71",
 					steel: "#60A2B9",
-					fire: "#E72324",
+					fire: "#ff9d55",
 					water: "#2481F0",
 					grass: "#3DA224",
 					electric: "#FAC100",
@@ -34,8 +34,10 @@ export default {
 			},
 			fontFamily: {
 				customFont: ["tilt-neon", "Tilt Neon"], 
+				titleFont: ["bungee", "Bungee"], 
 			  },
 		},
 	},
 	plugins: [],
+	 
 }

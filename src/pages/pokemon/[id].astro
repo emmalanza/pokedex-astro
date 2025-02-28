@@ -3,8 +3,8 @@ import Layout from "../../layouts/Layout.astro";
 
 import PokemonCard from '../../components/PokemonCard.astro';
 import { getPokemonsByIdOrName } from "../../lib/controllers/pokemonController";
-import { type PokemonBig, type PokemonType, TypeColors, type PokemonSmall, totalNumOfPokemons } from "../../lib/models/pokemonModels";
-import { capitalizeFirstLetter, mapId, mapWHPokemon } from "../../lib/utils/utils";
+import { type PokemonBig, type PokemonType, type PokemonSmall, totalNumOfPokemons } from "../../lib/models/pokemonModels";
+import { capitalizeFirstLetter, mapId, mapWHPokemon, TypeColors, Typesvg } from "../../lib/utils/utils";
 const {id} = Astro.params;
 
 export async function getStaticPaths() {
@@ -16,52 +16,69 @@ export async function getStaticPaths() {
 }
 
 const pokemon : PokemonBig | undefined = await getPokemonsByIdOrName(id);
+const typeName = pokemon?.basicData.types[0].type.name ?? 'unknown';
+
 ---
 
 <Layout title={pokemon!.basicData.name}>
+  <section class="flex flex-col justify-center items-center mt-44 px-4 text-gray-800">
+    
+    {/* Sección del Pokémon */}
+    <div class="flex flex-col md:flex-row justify-between items-center w-full max-w-5xl gap-8">
+      <div class="flex flex-col items-center text-center">
+        <img
+          src={pokemon!.basicData.image}
+          alt={`Una foto de ${pokemon!.basicData.name}`}
+          class="xl:w-96 xl:h-96"
+        />
+        <p class="mt-4 text-lg">{pokemon?.description}</p>
+      </div>
 
-    <section class="flex flex-col justify-center items-center 
-    mt-28">
-
-    <div class="flex flex-col items-center text-center mb-12
-      w-full rounded-2xl">
-        <h2 class="text-4xl font-bold tracking-widest mb-4">{capitalizeFirstLetter(pokemon!.basicData.name)}</h2>
-        <h3 class="text-xs tracking-widest mb-4">No. {mapId(pokemon!.basicData.id)}</h3>
-        <img src={pokemon!.basicData.image} alt={pokemon!.basicData.name} 
-        class="h-52 w-52" transition:name=`media-image-${pokemon!.basicData.name}`/>
-        <div class="flex flex-col space-x-1 mt-1 p-1 gap-2">
-            <span class="font-medium text-lg tracking-wide">Height: {mapWHPokemon(pokemon!.height)} m</span>
-            <span class="font-medium text-lg tracking-wide">Weight: {mapWHPokemon(pokemon!.weight)} kg</span>
-        </div>
-        <div class="flex flex-row space-x-1 mt-1 p-1 gap-2">
-            {pokemon?.basicData.types.map((types : PokemonType) => (
-                <p class=` ${TypeColors[types.type.name]} 
-                opacity-80 rounded text-white text-center 
-                font-semibold text-lg tracking-wide p-1.5 ` 
-                >{types.type.name}</p>
-            ))}
-        </div>
-    </div>
-
-    <div class="flex flex-col items-center text-center gap-4
-    border rounded-2xl">
-
-    <h2 class="text-4xl font-bold tracking-widest">Evoluciones</h2>
-
-        <div class="flex flex-row flex-wrap gap-4">
-            {
-                pokemon?.evolutions?.length === 1 ?  
-                <p>Este pokémon no tiene evolucionnes</p>
-                :
-                pokemon?.evolutions?.map((pokemon : PokemonSmall) => (
-                <PokemonCard {pokemon}/>  
-                ))
-                }
-        </div>
+      <div class="flex flex-col items-center text-center lg:mt-12 md:mt-0 w-full max-w-md rounded-2xl shadow-lg p-8 bg-white">
+        <h2 class="text-6xl font-bold tracking-widest mb-6">
+          {capitalizeFirstLetter(pokemon!.basicData.name)}
+        </h2>
+        <h3 class="text-sm tracking-widest">No. {mapId(pokemon!.basicData.id)}</h3>
+        <span class="font-medium text-lg tracking-wide">Altura: {mapWHPokemon(pokemon!.height)} m</span>
+        <span class="font-medium text-lg tracking-wide">Peso: {mapWHPokemon(pokemon!.weight)} kg</span>
         
+        <div class="flex flex-wrap justify-center gap-3 mt-6">
+          {pokemon?.basicData.types.map((types: PokemonType) => (
+            <div 
+              class="flex items-center px-3 py-1 gap-2 border-2 rounded-xl shadow-md text-gray-800 font-medium tracking-wide capitalize"
+              style={{ backgroundColor: TypeColors[types.type.name] }}
+            >
+              <img
+                src={`${Typesvg[types.type.name]}`}
+                alt={`${types.type.name} icon`}
+                class="w-5 h-5" 
+              />
+              <p>{types.type.name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
-
-    </section>
-
+    
+    {/* Sección de Evoluciones */}
+    <div class="flex flex-col items-center text-center gap-6 w-full md:max-w-2xl lg:max-w-4xl 2xl:max-w-6xl mt-16 
+    border-2 rounded-2xl bg-gradient-to-r from-black/70 to-gray-600/70 shadow-lg p-8">
+      <h2 class="text-4xl font-bold tracking-widest text-white">Evoluciones</h2>
+      <div class="flex flex-wrap flex-col lg:flex-row lg:min-w-[1000px] justify-center gap-6">
+        {pokemon?.evolutions?.length === 0 ? (
+          <p class="text-white">Este pokémon no tiene evoluciones.</p>
+        ) : (
+          pokemon?.evolutions?.map((evolution: PokemonSmall, index: number) => (
+            <div class="min-w-[275px] lg:min-w-fit flex flex-col lg:flex-row justify-center items-center gap-3">
+              <PokemonCard pokemon={evolution} />
+              {pokemon?.evolutions && index < pokemon.evolutions.length - 1 && (
+                <span class="text-2xl text-gray-400 lg:inline hidden">&#8594;</span>
+                <span class="text-2xl text-gray-400 lg:hidden inline">&#8595;</span>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  </section>
 </Layout>
-

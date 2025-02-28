@@ -1,22 +1,17 @@
 ---
 import PokemonGrid from '../../components/PokemonGrid.astro';
-import { getPokemons, getPokemonsByIdOrName } from '../../lib/controllers/pokemonController';
+import { getPokemonsByIdOrName } from '../../lib/controllers/pokemonController';
 import type { PokemonSmall } from '../../lib/models/pokemonModels';
 
-const url = new URL(Astro.request.url);
+
 let pokemons: PokemonSmall[] | undefined = [];
 let errorMessage: string | null = null;
-const pokemonName = url.searchParams.get("pokemon");
+const randomNumber = Math.floor(Math.random() * 1025) + 1;
+const pokemon = await getPokemonsByIdOrName(randomNumber.toString());
 
-if (!pokemonName) {
-   pokemons = await getPokemons(0, 12) ?? [];
-}
-else {
+!pokemon ? errorMessage = "No se encontró el Pokémon." : pokemons.push(pokemon.basicData);
 
-  const pokemon = await getPokemonsByIdOrName(pokemonName.toLowerCase());
-  !pokemon ? errorMessage = "No se encontró el Pokémon." : pokemons.push(pokemon.basicData);
 
-}
 
 ---
 

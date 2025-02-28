@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-outline {
+    text-shadow: 
+      2px 2px 10px #3e5ca2, 
+      -2px -2px 10px #3e5ca2,  
+      2px -2px 10px #3e5ca2,
+      -2px 2px 10px #3e5ca2;
+  }
+}
+
+body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@font-face {
+    font-family: "Tilt Neon";
+    src: url("/public/fonts/tilt-neon-latin-400-normal.woff2") format("woff2");
+    font-weight: normal;
+    font-style: normal;
+  }
+@font-face {
+    font-family: "Bungee";
+    src: url("/public/fonts/Bungee-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+  }

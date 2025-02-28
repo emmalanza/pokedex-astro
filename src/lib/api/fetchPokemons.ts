@@ -1,4 +1,4 @@
-import { getPokemonsEvolutions } from "../controllers/pokemonController";
+import { getPokemonDescription, getPokemonsEvolutions } from "../controllers/pokemonController";
 import { type PokemonSmall, type PokemonType, type PokemonBig } from "../models/pokemonModels";
 
 export async function  fetchPokemons(offset: number, limit: number) : Promise<PokemonSmall[]> {
@@ -82,7 +82,8 @@ export async function fetchPokemonsByIdOrName(idOrName : string) : Promise<Pokem
         },
         height: pokemonResponse.height,
         weight: pokemonResponse.weight,
-        evolutions: await getPokemonsEvolutions(pokemonResponse.id)
+        evolutions: await getPokemonsEvolutions(pokemonResponse.id),
+        description: (await getPokemonDescription(pokemonResponse.id)) ?? ''
     }
     
     return pokemon;
@@ -136,4 +137,41 @@ export async function fetchPokemonsEvolutions(id: number) : Promise<PokemonSmall
     
     return pokemonEvolutionData;
 
+}
+
+export async function fetchPokemonDescription(id: number): Promise<string> {
+    try {
+        // Fetch de la API
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
+        
+        // Verifica si la respuesta es correcta
+        if (!response.ok) {
+            throw new Error(`Error fetching Pokémon species: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Verifica si hay flavor_text_entries disponibles
+        if (!data.flavor_text_entries || data.flavor_text_entries.length === 0) {
+            return "Descripción no disponible.";
+        }
+
+        // Filtra por idioma español (es)
+        const descriptionEntry = data.flavor_text_entries.find(
+            (entry: { language: { name: string } }) => entry.language.name === "es"
+        );
+
+        // Si encuentra una descripción en español, la devuelve, si no, devuelve la primera disponible
+        const description = descriptionEntry 
+            ? descriptionEntry.flavor_text 
+            : data.flavor_text_entries[0].flavor_text;
+
+        // Limpia los saltos de línea y retorna
+        console.log("description", description);
+        return description.replace(/(\r\n|\n|\r)/gm, "");
+
+    } catch (error) {
+        console.error("Error fetching Pokémon description:", error);
+        return "Error al obtener la descripción.";
+    }
 }

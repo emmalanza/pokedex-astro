@@ -1,0 +1,27 @@
+---
+import type { PokemonSmall } from "../lib/models/pokemonModels";
+import PokemonCard from "./PokemonCard.astro";
+
+const {pokemons} = Astro.props;
+
+---
+
+<div id="pokemon-grid" class="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6
+bg-gradient-radial rounded-2xl">
+  {pokemons?.map((pokemon: PokemonSmall, index: number) => {
+    if (index === 11) {
+      return (
+          <div
+            id="load-more-container"
+            hx-get="partials/load-more-pokemons?offset=12"
+            hx-trigger="revealed"
+            hx-swap="afterend"
+   
+          >
+          <PokemonCard {pokemon} />
+          </div>
+      );
+    }
+    return <div> <PokemonCard {pokemon} /></div> 
+  })}
+</div>

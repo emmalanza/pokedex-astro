@@ -1,4 +1,4 @@
-import { fetchPokemons, fetchPokemonsByIdOrName
+import { fetchPokemonDescription, fetchPokemons, fetchPokemonsByIdOrName
     , fetchPokemonsEvolutions } from "../api/fetchPokemons";
 
 export async function getPokemons(offset: number, limit: number) {
@@ -25,5 +25,13 @@ export async function getPokemonsEvolutions(id: number){
         return evolutions;
     }catch(error){
         console.log('Error fetching pokemons evolutions');
+    }
+}
+export async function getPokemonDescription(id: number){
+    try {
+        const description = await fetchPokemonDescription(id);
+        return description;
+    }catch(error){
+        console.log('Error fetching pokemons description');
     }
 }

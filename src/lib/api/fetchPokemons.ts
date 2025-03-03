@@ -47,8 +47,9 @@ export async function  fetchPokemons(offset: number, limit: number) : Promise<Po
                 return {
                     name: data.name,
                     id: pokemonById.id,
-                    image: `https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/other/dream-world/${pokemonById.id}.svg`,
-                    types: types, 
+                    image: pokemonById.id >= 650 
+                    ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonById.id}.png` 
+                    : `https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/other/dream-world/${pokemonById.id}.svg`,                    types: types, 
                 };
             })
         ).catch();
@@ -69,7 +70,8 @@ export async function fetchPokemonsByIdOrName(idOrName : string) : Promise<Pokem
     .then(data => data)
     .catch(err => console.log(err));
 
-
+    console.log("hoolalala",idOrName);
+    console.log(pokemonResponse.id);
 
     const pokemon : PokemonBig = 
     {
@@ -77,8 +79,9 @@ export async function fetchPokemonsByIdOrName(idOrName : string) : Promise<Pokem
             id: pokemonResponse.id,
             name: pokemonResponse.name,
             types: pokemonResponse.types,
-            image: `https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/other/dream-world/${pokemonResponse.id}.svg`,
-
+            image: pokemonResponse.id >= 650 
+            ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonResponse.id}.png` 
+            : `https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/other/dream-world/${pokemonResponse.id}.svg`,
         },
         height: pokemonResponse.height,
         weight: pokemonResponse.weight,
@@ -109,9 +112,19 @@ export async function fetchPokemonsEvolutions(id: number) : Promise<PokemonSmall
     evolutionNames.push(evolutionChainResponse.chain.species.name);
     //Y luego recorremos todas las evoluciones :)
     const evolutionChainData = evolutionChainResponse.chain.evolves_to;
+    console.log(evolutionChainData, evolutionNames);
     function extractEvolutions(chain: any) {
         if(chain.length > 0){
             chain.forEach((evolution : any) => {
+                if(evolution.species.name === "wormadam"){
+                    evolution.species.name = "wormadam-plant"; 
+                }
+                if(evolution.species.name === "lycanroc"){
+                    evolution.species.name = "lycanroc-midday"; 
+                }
+                if(evolution.species.name === "toxtricity"){
+                    evolution.species.name = "toxtricity-amped"; 
+                }
                 evolutionNames.push(evolution.species.name);
                 if (evolution.evolves_to.length > 0) {
                     extractEvolutions(evolution.evolves_to);
@@ -119,9 +132,8 @@ export async function fetchPokemonsEvolutions(id: number) : Promise<PokemonSmall
             });
         }
     }
-
     extractEvolutions(evolutionChainData);
-
+    
     const pokemonEvolutionData: PokemonSmall[] = [];
     for (const name of evolutionNames) {
         const data = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
@@ -131,8 +143,9 @@ export async function fetchPokemonsEvolutions(id: number) : Promise<PokemonSmall
             id: data.id,
             name: data.name,
             types: data.types,
-            image: `https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/other/dream-world/${data.id}.svg`,
-        })
+            image: data.id >= 650 
+            ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png` 
+            : `https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/other/dream-world/${data.id}.svg`,})
     }
     
     return pokemonEvolutionData;
@@ -166,9 +179,8 @@ export async function fetchPokemonDescription(id: number): Promise<string> {
             ? descriptionEntry.flavor_text 
             : data.flavor_text_entries[0].flavor_text;
 
-        // Limpia los saltos de línea y retorna
-        console.log("description", description);
-        return description.replace(/(\r\n|\n|\r)/gm, "");
+        return description.replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, " ").trim();
+
 
     } catch (error) {
         console.error("Error fetching Pokémon description:", error);

@@ -1,6 +1,6 @@
 ---
 import { type PokemonType } from "../lib/models/pokemonModels";
-import { capitalizeFirstLetter, mapId, TypeColors, Typesvg } from "../lib/utils/utils";
+import { capitalizeFirstLetter, mapId, TypeColors, TypesEs, Typesvg } from "../lib/utils/utils";
 
 const {pokemon} = Astro.props;
 const { id, name, image, types } = pokemon;
@@ -14,18 +14,23 @@ const { id, name, image, types } = pokemon;
          alt={`Una foto de ${name}`} 
          transition:name="media-image-${name}"/>
 
-    <h3 class="text-xl sm:text-2xl font-bold tracking-wide mt-2">{capitalizeFirstLetter(name)}</h3>
+         <h3 class="text-xl sm:text-2xl font-bold tracking-wide truncate w-full max-w-xs overflow-hidden text-ellipsis whitespace-nowrap text-center">
+            {capitalizeFirstLetter(name)}
+        </h3>
+        
+        
     <p class="text-xs sm:text-sm tracking-wide p-1">No. {mapId(id)}</p>
+
     <div class="flex flex-wrap justify-center mt-2 p-1 gap-2">
         {types.map((types : PokemonType) => (
             <div class={`flex items-center px-2 py-1 gap-1 border-2 ${TypeColors[types.type.name]} rounded-xl`}>
                 <img
                     src={`${Typesvg[types.type.name]}`}
-                    alt={`${types.type.name} icon`}
+                    alt={`${TypesEs[types.type.name]} icon`}
                     class="w-4 h-4" 
                 />
                 <p class="opacity-80 text-gray-800 text-center font-medium tracking-wide">
-                    {types.type.name}
+                    {`${TypesEs[types.type.name]}`}
                 </p>
             </div>
         ))}

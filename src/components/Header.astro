@@ -1,11 +1,23 @@
-<header class="fixed top-0 z-10 flex items-center py-9 w-full">
-    <a href="/" class="ml-4 z-20 rounded-full">
-      <img 
-        src="/favicon.svg" 
-        alt="Una pokeball" 
-        class="size-12 rounded-full transition-transform transform hover:scale-110 hover:shadow-lg hover:cursor-pointer"
-      />
-    </a>
-    <h1 class="absolute inset-0 mt-9 text-center text-5xl font-extrabold tracking-widest z-10">Pokédex</h1> 
-  </header>
+<header id="header" class="fixed top-0 z-10 flex items-center py-6 w-full transition-all duration-300">
+  <a href="/" class="ml-4 z-20 rounded-full">
+    <img 
+      src="/favicon.svg" 
+      alt="Una pokeball" 
+      class="size-12 rounded-full transition-transform transform hover:scale-110 hover:shadow-lg hover:cursor-pointer"
+    />
+  </a>
+  <h1 class="absolute inset-0 mt-9 text-center text-5xl font-extrabold tracking-widest z-10">Pokédex</h1> 
+</header>
+
+<script>
+document.addEventListener("scroll", () => {
+  const header = document.getElementById("header");
   
+  if(header)  
+  if (window.scrollY > 50) {
+    header.classList.add("backdrop-blur-sm");
+  } else {
+    header.classList.remove("backdrop-blur-sm");
+  }
+});
+</script>

@@ -1,0 +1,31 @@
+---
+// Puedes importar componentes o usar el título dinámicamente si lo deseas.
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Página no encontrada">
+    <section class="flex flex-col justify-center items-center gap-4 h-screen px-4 text-gray-800 text-center">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-red-600">
+          Página no encontrada
+        </h1>
+        <div class="relative max-w-xs sm:max-w-lg md:max-w-2xl lg:max-w-3xl">
+          <img
+            src="/surprised-pikachu.png"
+            alt="Imagen de error 404"
+            class="w-full rounded-md"
+          />
+          <div class="absolute top-2 left-2 bg-white bg-opacity-90 rounded-md p-1 sm:p-4 md:p-6 shadow-md">
+            <p class="text-xs sm:text-lg mt-2">
+              Lo sentimos, la página que buscas no existe.
+            </p>
+            <a
+              href="/"
+              class="mt-4 inline-block text-blue-500 hover:underline text-base sm:text-xl"
+            >
+              Volver a la página de inicio
+            </a>
+          </div>
+        </div>
+      </section>
+      
+</Layout>

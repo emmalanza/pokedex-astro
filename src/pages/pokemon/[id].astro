@@ -4,27 +4,35 @@ import Layout from "../../layouts/Layout.astro";
 import PokemonCard from '../../components/PokemonCard.astro';
 import { getPokemonsByIdOrName } from "../../lib/controllers/pokemonController";
 import { type PokemonBig, type PokemonType, type PokemonSmall, totalNumOfPokemons } from "../../lib/models/pokemonModels";
-import { capitalizeFirstLetter, mapId, mapWHPokemon, TypeColors, Typesvg } from "../../lib/utils/utils";
+import { capitalizeFirstLetter, mapId, mapWHPokemon, TypeColors, TypesEs, Typesvg } from "../../lib/utils/utils";
 const {id} = Astro.params;
 
 export async function getStaticPaths() {
     const paths = [];
-    for (let i = 1; i <= totalNumOfPokemons; i++) { 
-        paths.push({params: {id: i.toString()}});
+    for (let i = 1; i <= totalNumOfPokemons; i++) {
+        paths.push({ params: { id: i.toString() } });
     }
-    return paths;
+    return { paths };
+}
+
+if (isNaN(Number(id)) || Number(id) > totalNumOfPokemons || Number(id) < 1) {
+   return Astro.redirect('/404');
 }
 
 const pokemon : PokemonBig | undefined = await getPokemonsByIdOrName(id);
-const typeName = pokemon?.basicData.types[0].type.name ?? 'unknown';
+
+if (pokemon === undefined) {
+  return Astro.redirect('/404');
+}
 
 ---
 
-<Layout title={pokemon!.basicData.name}>
+<Layout title={capitalizeFirstLetter(pokemon!.basicData.name)}>
   <section class="flex flex-col justify-center items-center mt-44 px-4 text-gray-800">
     
     {/* Sección del Pokémon */}
     <div class="flex flex-col md:flex-row justify-between items-center w-full max-w-5xl gap-8">
+
       <div class="flex flex-col items-center text-center">
         <img
           src={pokemon!.basicData.image}
@@ -50,35 +58,99 @@ const typeName = pokemon?.basicData.types[0].type.name ?? 'unknown';
             >
               <img
                 src={`${Typesvg[types.type.name]}`}
-                alt={`${types.type.name} icon`}
+                alt={`${TypesEs[types.type.name]} icon`}
                 class="w-5 h-5" 
               />
-              <p>{types.type.name}</p>
+              <p>{`${TypesEs[types.type.name]}`}</p>
             </div>
           ))}
         </div>
+
       </div>
+
     </div>
     
     {/* Sección de Evoluciones */}
     <div class="flex flex-col items-center text-center gap-6 w-full md:max-w-2xl lg:max-w-4xl 2xl:max-w-6xl mt-16 
     border-2 rounded-2xl bg-gradient-to-r from-black/70 to-gray-600/70 shadow-lg p-8">
       <h2 class="text-4xl font-bold tracking-widest text-white">Evoluciones</h2>
-      <div class="flex flex-wrap flex-col lg:flex-row lg:min-w-[1000px] justify-center gap-6">
-        {pokemon?.evolutions?.length === 0 ? (
-          <p class="text-white">Este pokémon no tiene evoluciones.</p>
-        ) : (
-          pokemon?.evolutions?.map((evolution: PokemonSmall, index: number) => (
-            <div class="min-w-[275px] lg:min-w-fit flex flex-col lg:flex-row justify-center items-center gap-3">
-              <PokemonCard pokemon={evolution} />
-              {pokemon?.evolutions && index < pokemon.evolutions.length - 1 && (
-                <span class="text-2xl text-gray-400 lg:inline hidden">&#8594;</span>
-                <span class="text-2xl text-gray-400 lg:hidden inline">&#8595;</span>
-              )}
-            </div>
-          ))
-        )}
+
+      <div class="flex flex-wrap flex-col lg:flex-row lg:min-w-[1000px] justify-center items-center gap-6">
+
+        {pokemon?.evolutions![0].name === "poliwag" || 
+        pokemon?.evolutions![0].name === "ralts" 
+        ? (
+          // Caso para mostrar evolución en dos ramas
+          <PokemonCard pokemon={pokemon.basicData} />
+          <span class="text-2xl text-gray-400 lg:inline hidden">&#8594;</span>
+          <PokemonCard pokemon={pokemon.evolutions![1]} />
+          <span class="text-2xl text-gray-400 lg:inline hidden">&#8594;</span>
+          <div class="flex flex-col gap-6 items-center">
+            <PokemonCard pokemon={pokemon.evolutions![2]} />
+            <PokemonCard pokemon={pokemon.evolutions![3]} />
+          </div>
+        ) : pokemon?.evolutions![0].name === "burmy" ||
+            pokemon?.evolutions![0].name === "slowpoke"||
+            pokemon?.evolutions![0].name === "wurmple"
+        ? (
+            <PokemonCard pokemon={pokemon.basicData} />
+            <span class="text-2xl text-gray-400 lg:inline hidden">&#8594;</span>
+            <div class="flex flex-col gap-6 items-center">
+              <PokemonCard pokemon={pokemon.evolutions![1]} />
+              <PokemonCard pokemon={pokemon.evolutions![2]} />
+            </div>      
+        ) : pokemon?.evolutions![0].name === "eevee" || 
+            pokemon?.evolutions![0].name === "tyrogue" ||
+            pokemon?.evolutions![0].name === "nincada" 
+        ? (
+        // Mostrar primero el Pokémon y luego sus evoluciones
+        <div class="flex flex-wrap flex-col lg:min-w-[1000px] justify-center gap-6">
+          <div class="min-w-[275px] lg:min-w-fit flex flex-col justify-center items-center gap-3">
+            <PokemonCard pokemon={pokemon.basicData} />
+            <span class="text-2xl text-gray-400 lg:inline hidden">&#8595;</span>
+          </div>
+          <div class="flex flex-wrap justify-center gap-3">
+            {Array.from({ length: Math.ceil((pokemon?.evolutions?.slice(1).length || 0) / 3) }, (_, groupIndex) => {
+              const start = groupIndex * 3;
+              const end = start + 3;
+              return pokemon?.evolutions?.slice(1).slice(start, end); // Excluimos el primer Pokémon base y agrupar por 3
+            }).map((evolutionGroup, groupIndex) => (
+              <div class="flex items-center justify-center gap-3">
+                {evolutionGroup?.map((evolution: PokemonSmall, index: number) => (
+                  <div class="flex items-center">
+                    <PokemonCard pokemon={evolution} />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+        ) : ( pokemon?.evolutions?.length === 1 ? (
+            <p class="text-white">Este pokémon no tiene evoluciones.</p>
+            ) : (
+                  Array.from({ length: Math.ceil((pokemon?.evolutions?.length || 0) / 3) }, (_, groupIndex) => {
+                    const start = groupIndex * 3;
+                    const end = start + 3;
+                    return pokemon?.evolutions?.slice(start, end); // Extraemos grupos de 3
+                  }).map((evolutionGroup, groupIndex) => (
+                    <div class="min-w-[275px] lg:min-w-fit flex flex-col lg:flex-row justify-center items-center gap-3">
+                      {/* Renderizamos las evoluciones del grupo */}
+                      {evolutionGroup?.map((evolution: PokemonSmall, index: number) => (
+                        <div class="flex items-center">
+                          <PokemonCard pokemon={evolution} />
+                          {index < evolutionGroup?.length - 1 && (
+                            <span class="text-2xl text-gray-400 lg:inline hidden">&#8594;</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ))
+                )
+            )}  
+
       </div>
+
     </div>
+
   </section>
 </Layout>

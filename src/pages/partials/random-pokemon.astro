@@ -3,15 +3,12 @@ import PokemonGrid from '../../components/PokemonGrid.astro';
 import { getPokemonsByIdOrName } from '../../lib/controllers/pokemonController';
 import type { PokemonSmall } from '../../lib/models/pokemonModels';
 
-
 let pokemons: PokemonSmall[] | undefined = [];
 let errorMessage: string | null = null;
+
 const randomNumber = Math.floor(Math.random() * 1025) + 1;
 const pokemon = await getPokemonsByIdOrName(randomNumber.toString());
-
 !pokemon ? errorMessage = "No se encontró el Pokémon." : pokemons.push(pokemon.basicData);
-
-
 
 ---
 

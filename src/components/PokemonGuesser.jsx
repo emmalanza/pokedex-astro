@@ -96,7 +96,7 @@ const GuessPokemon = ({ pokemonName, pokemonImage }) => {
       className="flex flex-col xl:flex-row justify-center items-center gap-4  h-screen max-w-full mt-32 px-4"
     >
       {/* Div Azul */}
-      <div className="flex flex-col items-center justify-center relative bg-[#3e5ca2] p-4 rounded-lg shadow-md 
+      <div className="flex flex-col items-center justify-center  bg-[#3e5ca2] p-6 gap-4 rounded-lg shadow-md 
       w-full xl:w-[800px] 2xl:w-[950px] h-[400px] xl:h-[800px] 2xl:h-[950px]">
         <img
           className="w-40 h-40 sm:w-48 sm:h-48 lg:w-64 lg:h-64"
@@ -107,14 +107,14 @@ const GuessPokemon = ({ pokemonName, pokemonImage }) => {
               "invert(1) grayscale(1) brightness(0) drop-shadow(0px -10px 20px rgba(255, 255, 255, 0.8))",
           }}
         />
-        <h2 className="text-[#f7cc46] text-4xl sm:text-5xl lg:text-6xl text-center font-bold font-titleFont absolute bottom-5 text-outline">
+        <h2 className="text-[#f7cc46] text-4xl sm:text-5xl lg:text-6xl text-center font-bold font-titleFont text-outline">
           Adivina el Pokémon
         </h2>
       </div>
   
       {/* Div Amarillo */}
       <div className="bg-[#f7cc46] p-6 rounded-lg shadow-md 
-     w-full xl:w-[800px] 2xl:w-[950px] h-[400px] xl:h-[800px] 2xl:h-[950px]
+      w-full xl:w-[800px] 2xl:w-[950px] h-[400px] xl:h-[800px] 2xl:h-[950px]
       font-titleFont flex flex-col justify-center items-center gap-4 lg:gap-8">
         {!completed ? (
           <>

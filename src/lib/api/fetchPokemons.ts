@@ -69,10 +69,7 @@ export async function fetchPokemonsByIdOrName(idOrName : string) : Promise<Pokem
     .then(res => res.json())
     .then(data => data)
     .catch(err => console.log(err));
-
-    console.log("hoolalala",idOrName);
-    console.log(pokemonResponse.id);
-
+    
     const pokemon : PokemonBig = 
     {
         basicData: {
@@ -112,7 +109,7 @@ export async function fetchPokemonsEvolutions(id: number) : Promise<PokemonSmall
     evolutionNames.push(evolutionChainResponse.chain.species.name);
     //Y luego recorremos todas las evoluciones :)
     const evolutionChainData = evolutionChainResponse.chain.evolves_to;
-    console.log(evolutionChainData, evolutionNames);
+
     function extractEvolutions(chain: any) {
         if(chain.length > 0){
             chain.forEach((evolution : any) => {
